@@ -21,8 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={dmSans.className}>
-        <Header />
-        <PageTransition>{children}</PageTransition>
+        <PageTransition>
+          <Header />
+          {children}
+        </PageTransition>
       </body>
     </html>
   );
