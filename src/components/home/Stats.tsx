@@ -17,7 +17,7 @@ export default function Stats() {
   const isInView = useInView(ref, { once: true });
 
   return (
-    <div ref={ref} className="w-full h-[150px] bg-y_red my-5 flex items-center">
+    <div ref={ref} className="w-full h-[150px] bg-secondary-hover my-5 flex items-center">
       {isInView && (
         <motion.div
           initial={{ opacity: 0 }}

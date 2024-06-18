@@ -4,8 +4,8 @@ import { PiMapPinSimpleArea, PiPhone, PiMailbox } from "react-icons/pi";
 
 export default function Footer() {
   return (
-    <div className="w-full min-h-[200px] bg-y_red/20 py-5">
-      <div className="container">
+    <div className="w-full min-h-[200px] border-t border-t-4 border-secondary-hover py-5 flex justify-center items-center">
+      <div className="container max-w-[600px] flex flex-col items-center gap-5 md:flex-row md:justify-between md:items-center">
         {/* Logo */}
         <div className="flex justify-center items-center">
           <Image
@@ -17,7 +17,10 @@ export default function Footer() {
         </div>
 
         {/* Address, Contact & Socials */}
-        <div>
+        <div className="space-y-2">
+          {/* <Link href="#" className="flex items-center gap-3">
+            <PiMapPinSimpleArea /> <span>https://yafoot-fc.com</span>
+          </Link> */}
           <Link href="#" className="flex items-center gap-3">
             <PiMapPinSimpleArea /> <span>Yaounde, Cameroon</span>
           </Link>

@@ -15,7 +15,7 @@ export default function Home() {
   const steps = [
     "Fill in the form",
     "Pay your participation fees",
-    "Get called by the staff to pass the tests",
+    "Get called to pass the tests",
     "Perform well and get selected",
   ];
 
@@ -28,7 +28,7 @@ export default function Home() {
             <div className="space-y-5 text-center md:text-left font-medium">
               <h1 className="text-3xl leading-[1] md:text-4xl lg:text-5xl">
                 Become the{" "}
-                <span className="text-y_red font-bold">next icon</span> of
+                <span className="text-secondary-hover font-bold">next icon</span> of
                 Cameroonian football
               </h1>
               <p className="text-white/60">
@@ -124,7 +124,7 @@ export default function Home() {
                         key={index}
                         className="text-xl flex items-center gap-3"
                       >
-                        <PiSealCheckFill className="text-y_red" /> {step}
+                        <PiSealCheckFill className="text-secondary-hover" /> {step}
                       </p>
                     );
                   })}
