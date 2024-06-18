@@ -8,8 +8,8 @@ export default function Header() {
       <Link href="/">
         <Image
           src="/images/yafoot-club.png"
-          width={80}
-          height={80}
+          width={60}
+          height={60}
           alt="yafoot-club"
           className="pointer-events-none"
         />

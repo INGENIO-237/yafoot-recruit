@@ -11,7 +11,7 @@ import { PiSealCheckFill } from "react-icons/pi";
 
 export default function Home() {
   const joinRef = useRef(null);
-  const joinIsInView = useInView(joinRef);
+  const joinIsInView = useInView(joinRef, { once: true });
   const steps = [
     "Fill in the form",
     "Pay your participation fees",
@@ -22,19 +22,18 @@ export default function Home() {
   return (
     <main>
       {/* Hero */}
-      <div className="container">
-        <div className="flex flex-col items-center md:flex-row md:items-start pb-5">
+      <div className="container min-h-[90vh]  md:min-h-[90vh] flex items-center">
+        <div className="flex w-full flex-col items-center md:flex-row md:items-start md:justify-between pb-5">
           <div className="order-2 md:order-1 max-w-[500px] mt-10 md:mt-0">
             <div className="space-y-5 text-center md:text-left font-medium">
-              <h1 className="text-4xl">
+              <h1 className="text-3xl leading-[1] md:text-4xl lg:text-5xl">
                 Become the{" "}
                 <span className="text-y_red font-bold">next icon</span> of
                 Cameroonian football
               </h1>
               <p className="text-white/60">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Repellat laudantium nesciunt cum, perspiciatis sapiente rem!
-                Eligendi voluptate aliquid corporis sapiente.
+                Repellat laudantium nesciunt cum.
               </p>
             </div>
 
@@ -115,13 +114,16 @@ export default function Home() {
             />
             <div className="md:flex md:items-center">
               <div className="text-left">
-                <h1 className="text-4xl mt-5 md:mt-0 font-medium">
+                <h1 className="text-3xl mt-5 md:mt-0 font-medium">
                   The whole process
                 </h1>
                 <div className="space-y-5 mt-8">
                   {steps.map((step, index) => {
                     return (
-                      <p key={index} className="text-xl flex items-center gap-3">
+                      <p
+                        key={index}
+                        className="text-xl flex items-center gap-3"
+                      >
                         <PiSealCheckFill className="text-y_red" /> {step}
                       </p>
                     );

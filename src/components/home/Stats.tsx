@@ -14,7 +14,7 @@ export default function Stats() {
   ];
 
   const ref = useRef(null);
-  const isInView = useInView(ref);
+  const isInView = useInView(ref, { once: true });
 
   return (
     <div ref={ref} className="w-full h-[150px] bg-y_red my-5 flex items-center">
@@ -27,7 +27,11 @@ export default function Stats() {
           {stats.map((stat, index) => {
             return (
               <div key={index} className="text-primary">
-                <CountUp end={stat.num} duration={3} className="text-4xl font-bold" />
+                <CountUp
+                  end={stat.num}
+                  duration={3}
+                  className="text-4xl font-bold"
+                />
                 <p className="font-medium">{stat.text}</p>
               </div>
             );
