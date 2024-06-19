@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <main>
       {/* Hero */}
-      <div className="container min-h-[90vh]  md:min-h-[90vh] flex items-center">
+      <div className="container min-h-[90vh] md:min-h-[90vh] flex items-center">
         <div className="flex w-full flex-col items-center md:flex-row md:items-start md:justify-between pb-5">
           <div className="order-2 md:order-1 max-w-[500px] mt-10 md:mt-0">
             <div className="space-y-5 text-center md:text-left font-medium">
@@ -74,11 +74,11 @@ export default function Home() {
             className="order-1 md:order-2 w-full flex justify-center"
           >
             <Image
-              src="/images/foot-hero.png"
-              width={450}
-              height={450}
+              src="/images/hero-image.png"
+              width={600}
+              height={600}
               priority
-              alt="foot-hero"
+              alt="hero-image"
               className="pointer-events-none"
             />
           </motion.div>
@@ -105,9 +105,9 @@ export default function Home() {
             className="order-1 md:order-2 w-full flex flex-col md:flex-row justify-center md:justify-start md:gap-5"
           >
             <Image
-              src="/images/how-join.png"
-              width={450}
-              height={450}
+              src="/images/join.png"
+              width={600}
+              height={600}
               priority
               alt="how-join"
               className="pointer-events-none"

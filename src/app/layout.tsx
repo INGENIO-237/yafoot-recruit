@@ -4,6 +4,8 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import PageTransition from "@/components/ui/PageTransition";
 import Footer from "@/components/layout/Footer";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const dmSans = DM_Sans({ subsets: ["latin"] });
 
@@ -25,6 +27,7 @@ export default function RootLayout({
         <PageTransition>
           <Header />
           {children}
+          <ToastContainer position="bottom-center" />
           <Footer />
         </PageTransition>
       </body>

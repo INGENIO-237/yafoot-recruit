@@ -1,7 +1,9 @@
+import ApplicationForm from "@/components/apply/ApplicationForm";
+
 export default function Page() {
   return (
-    <div className="container">
-      <h1>Apply</h1>
+    <div className="container min-h-[90vh] flex justify-center items-start">
+      <ApplicationForm />
     </div>
   );
 }
