@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { nativeEnum, object, optional, string, z } from "zod";
+import { object, optional, string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -16,7 +16,7 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import Cities from "./Cities";
 import Positions from "./Positions";
-import PhoneInput from "react-phone-number-input";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import Link from "next/link";
 import { CITIES, POSITIONS } from "@/lib/enums";
@@ -25,12 +25,10 @@ import { toast } from "react-toastify";
 const ApplicationSchema = object({
   firstname: optional(string()),
   lastname: string({ required_error: "Last name is required" }),
-  // city: nativeEnum(CITIES, { required_error: "City is required" }),
   phone: string({
     required_error: "Phone number is required",
     invalid_type_error: "Invalid phone number",
   }),
-  // position: nativeEnum(POSITIONS, { required_error: "Position is required" }),
 });
 
 type ApplicationData = z.infer<typeof ApplicationSchema>;
@@ -66,6 +64,8 @@ export default function ApplicationForm() {
       )
     )
       errors.push("Invalid field position");
+
+    if (!isValidPhoneNumber(data.phone)) errors.push("Invalid phone number");
 
     if (errors.length > 0) {
       errors.forEach((error) => toast.error(error));
@@ -172,7 +172,7 @@ export default function ApplicationForm() {
           )}
         />
         <div className="flex justify-between items-center">
-          <Link href="#" className="text-secondary-hover">
+          <Link href="/payment" className="text-secondary-hover">
             Already registered
           </Link>
           <Button type="submit">Submit</Button>
