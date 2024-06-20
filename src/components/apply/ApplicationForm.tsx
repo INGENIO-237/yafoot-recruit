@@ -13,7 +13,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import Cities from "./Cities";
 import Positions from "./Positions";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
@@ -33,7 +33,11 @@ const ApplicationSchema = object({
 
 type ApplicationData = z.infer<typeof ApplicationSchema>;
 
-export default function ApplicationForm() {
+export default function ApplicationForm({
+  setIsSuccess,
+}: {
+  setIsSuccess: Dispatch<SetStateAction<boolean>>;
+}) {
   const [city, setCity] = useState("");
   const [position, setPosition] = useState("");
 
@@ -71,7 +75,11 @@ export default function ApplicationForm() {
       errors.forEach((error) => toast.error(error));
     } else {
       // TODO: Send data to backend
-      toast.success("Data sent to backend");
+      toast.success("Data sent to backend. Redirecting...");
+
+      setTimeout(() => {
+        setIsSuccess(true);
+      }, 3000);
     }
   }
 
