@@ -1,7 +1,7 @@
 "use client";
 
 import ApplicationForm from "@/components/apply/ApplicationForm";
-import SuccessView from "@/components/apply/SuccessView";
+import RegisterSuccess from "@/components/apply/RegisterSuccess";
 import { useState } from "react";
 
 export default function Page() {
@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <div className="container min-h-[90vh] flex justify-center items-start">
       {!isSuccess && <ApplicationForm setIsSuccess={setIsSuccess} />}
-      {isSuccess && <SuccessView />}
+      {isSuccess && <RegisterSuccess />}
     </div>
   );
 }
