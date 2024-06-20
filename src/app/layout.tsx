@@ -6,6 +6,7 @@ import PageTransition from "@/components/ui/PageTransition";
 import Footer from "@/components/layout/Footer";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Transition from "@/components/ui/Transition";
 
 const dmSans = DM_Sans({ subsets: ["latin"] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={dmSans.className}>
+        {/* <Transition /> */}
         <PageTransition>
           <Header />
           {children}
