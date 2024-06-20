@@ -25,8 +25,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={dmSans.className}>
-        {/* <Transition /> */}
         <PageTransition>
+        {/* <Transition /> */}
           <Header />
           {children}
           <ToastContainer position="bottom-center" />

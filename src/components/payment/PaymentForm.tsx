@@ -17,6 +17,7 @@ import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import Link from "next/link";
 import { toast } from "react-toastify";
+import { Dispatch, SetStateAction } from "react";
 
 const PaymentSchema = object({
   publicId: string({ required_error: "Please provide your public ID" }),
@@ -34,7 +35,11 @@ const WaitlistSchema = object({
 
 type WaitlistData = z.infer<typeof WaitlistSchema>;
 
-export default function PaymentForm() {
+export default function PaymentForm({
+  setIsSuccess,
+}: {
+  setIsSuccess: Dispatch<SetStateAction<boolean>>;
+}) {
   const session = {
     _id: "sjkdjs9892893829skdlksa",
     date: "July 2024",
@@ -56,7 +61,10 @@ export default function PaymentForm() {
       errors.forEach((error) => toast.error(error));
     } else {
       // TODO: Send data to backend
-      toast.success("Data sent to backend");
+      toast.success("Data sent to backend. Redirecting...");
+      setTimeout(() => {
+        setIsSuccess(true);
+      }, 5000);
     }
   }
 
@@ -70,7 +78,7 @@ export default function PaymentForm() {
 
   function onSubmitWaitlist(data: WaitlistData) {
     // TODO: Send data to backend
-    toast.success("Added the waitlist");
+    toast.success("Added the waitlist.");
   }
 
   return (
