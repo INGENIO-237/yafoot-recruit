@@ -147,3 +147,8 @@ export enum POSITIONS {
   MIDFIELDER = "MIDFIELDER",
   FORWARD = "FORWARD",
 }
+
+export enum PROVIDER {
+  OM = "OM",
+  MOMO = "MOMO",
+}
