@@ -17,10 +17,16 @@ import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { PROVIDER } from "@/lib/enums";
+import Image from "next/image";
 
 const PaymentSchema = object({
-  publicId: string({ required_error: "Please provide your public ID" }),
+  publicId: string({ required_error: "Please provide your public ID" })
+    .min(4, "Too short - Public ID must be 4 chars long")
+    .max(4, "Too long - Public ID can't exceed 4 chars long"),
   phone: string({
     required_error: "Phone number is required",
     invalid_type_error: "Invalid phone number",
@@ -46,6 +52,16 @@ export default function PaymentForm({
   };
   // const session = undefined;
 
+  const providers = [
+    { image: "/images/momo.png", value: PROVIDER.MOMO },
+    { image: "/images/om.png", value: PROVIDER.OM },
+  ];
+
+  // Handle provider
+  const [provider, setProvider] = useState(providers[0].value);
+
+  // End Handle provider
+
   const form = useForm<PaymentData>({
     resolver: zodResolver(PaymentSchema),
   });
@@ -61,10 +77,13 @@ export default function PaymentForm({
       errors.forEach((error) => toast.error(error));
     } else {
       // TODO: Send data to backend
+      const payload = { ...data, provider };
+      console.log({ payload });
+
       toast.success("Data sent to backend. Redirecting...");
-      setTimeout(() => {
-        setIsSuccess(true);
-      }, 5000);
+      // setTimeout(() => {
+      //   setIsSuccess(true);
+      // }, 5000);
     }
   }
 
@@ -110,18 +129,46 @@ export default function PaymentForm({
                 <FormLabel className="font-medium capitalize">
                   Public ID
                 </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Your public ID"
-                    className="text-black"
-                    {...field}
-                  />
-                </FormControl>
+                <div className="flex gap-3 items-center">
+                  <span className="text-xl">YA-</span>
+                  <FormControl>
+                    <Input
+                      placeholder="Your public ID"
+                      className="text-black"
+                      {...field}
+                    />
+                  </FormControl>
+                </div>
 
                 <FormMessage />
               </FormItem>
             )}
           />
+          <RadioGroup defaultValue={PROVIDER.MOMO} className="flex">
+            {providers.map((provider, index) => {
+              return (
+                <div key={index} className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value={provider.value}
+                    id={provider.value}
+                    className="text-white border-white"
+                    onClick={(e) => {
+                      setProvider(e.target.value as PROVIDER);
+                    }}
+                  />
+                  <Label htmlFor={provider.value}>
+                    <Image
+                      src={provider.image}
+                      width={70}
+                      height={70}
+                      alt={provider.value}
+                    />
+                  </Label>
+                </div>
+              );
+            })}
+          </RadioGroup>
+
           <FormField
             control={control}
             name="phone"
@@ -157,7 +204,7 @@ export default function PaymentForm({
       )}
       {!session && (
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleWaitlistSubmit(onSubmitWaitlist)}
           className="space-y-3 bg-gray-500/40 px-3 py-5 rounded backdrop-blur-lg w-full max-w-[500px]"
         >
           <div>
@@ -174,7 +221,7 @@ export default function PaymentForm({
             </p>
           </div>
           <FormField
-            control={control}
+            control={waitlistControl}
             name="publicId"
             render={({ field }) => (
               <FormItem>
