@@ -17,11 +17,13 @@ import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { PROVIDER } from "@/lib/enums";
 import Image from "next/image";
+import { useRegisterToWaitlist } from "@/lib/data/candidates";
+import LoadingButton from "../ui/Loading";
 
 const PaymentSchema = object({
   publicId: string({ required_error: "Please provide your public ID" })
@@ -39,18 +41,18 @@ const WaitlistSchema = object({
   publicId: string({ required_error: "Please provide your public ID" }),
 });
 
-type WaitlistData = z.infer<typeof WaitlistSchema>;
+export type WaitlistData = z.infer<typeof WaitlistSchema>;
 
 export default function PaymentForm({
   setIsSuccess,
 }: {
   setIsSuccess: Dispatch<SetStateAction<boolean>>;
 }) {
-  const session = {
-    _id: "sjkdjs9892893829skdlksa",
-    date: "July 2024",
-  };
-  // const session = undefined;
+  // const session = {
+  //   _id: "sjkdjs9892893829skdlksa",
+  //   date: "July 2024",
+  // };
+  const session = undefined;
 
   const providers = [
     { image: "/images/momo.png", value: PROVIDER.MOMO },
@@ -62,6 +64,9 @@ export default function PaymentForm({
 
   // End Handle provider
 
+  /**
+   * PAYMENT =======================>
+   */
   const form = useForm<PaymentData>({
     resolver: zodResolver(PaymentSchema),
   });
@@ -87,6 +92,31 @@ export default function PaymentForm({
     }
   }
 
+  /**
+   * WAITLIST =======================>
+   */
+  const {
+    registerToWaitlist,
+    data: wData,
+    isPending: wPending,
+    isSuccess: wSuccess,
+    error: wError,
+  } = useRegisterToWaitlist();
+
+  useEffect(() => {
+    if (wSuccess && wData) {
+      toast.success("Added the waitlist.");
+    }
+
+    if (wError) {
+      const errors = wError?.response?.data;
+
+      if (errors) {
+        errors.map((err: any) => toast.error(err.message));
+      }
+    }
+  }, [wSuccess, wData, wError]);
+
   // Show waitlist form in case no recruitment session available
   const waitlistForm = useForm<WaitlistData>({
     resolver: zodResolver(WaitlistSchema),
@@ -95,9 +125,9 @@ export default function PaymentForm({
   const { control: waitlistControl, handleSubmit: handleWaitlistSubmit } =
     waitlistForm;
 
-  function onSubmitWaitlist(data: WaitlistData) {
-    // TODO: Send data to backend
-    toast.success("Added the waitlist.");
+  async function onSubmitWaitlist(data: WaitlistData) {
+    // Send data to backend
+    await registerToWaitlist(data);
   }
 
   return (
@@ -228,13 +258,16 @@ export default function PaymentForm({
                 <FormLabel className="font-medium capitalize">
                   Public ID
                 </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Your public ID"
-                    className="text-black"
-                    {...field}
-                  />
-                </FormControl>
+                <div className="flex gap-3 items-center">
+                  <span className="text-xl">YA-</span>
+                  <FormControl>
+                    <Input
+                      placeholder="Your public ID"
+                      className="text-black"
+                      {...field}
+                    />
+                  </FormControl>
+                </div>
 
                 <FormMessage />
               </FormItem>
@@ -244,7 +277,7 @@ export default function PaymentForm({
             <Link href="/apply" className="text-secondary-hover">
               Not registered yet
             </Link>
-            <Button type="submit">Join</Button>
+            {wPending ? <LoadingButton /> : <Button type="submit">Join</Button>}
           </div>
         </form>
       )}

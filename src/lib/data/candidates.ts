@@ -2,6 +2,7 @@ import { ApplicationData } from "@/components/apply/ApplicationForm";
 import server from "../server";
 import { useMutation } from "@tanstack/react-query";
 import { CITIES, POSITIONS } from "../enums";
+import { WaitlistData } from "@/components/payment/PaymentForm";
 
 type RegisterCandidateData = ApplicationData & {
   city: string;
@@ -38,4 +39,27 @@ export function useRegisterCandidate() {
   });
 
   return { registerCandidate, error, isSuccess, isLoading, data };
+}
+
+export function useRegisterToWaitlist() {
+  async function addToWaitlist({ publicId }: WaitlistData) {
+    return server
+      .post("/waitlist", { publicId })
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error;
+      });
+  }
+
+  const {
+    mutateAsync: registerToWaitlist,
+    data,
+    isPending,
+    isSuccess,
+    error,
+  } = useMutation<any, any, WaitlistData, unknown>({
+    mutationFn: addToWaitlist,
+  });
+
+  return { registerToWaitlist, data, isPending, isSuccess, error };
 }

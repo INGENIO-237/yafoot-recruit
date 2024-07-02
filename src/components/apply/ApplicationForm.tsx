@@ -22,6 +22,7 @@ import Link from "next/link";
 import { CITIES, POSITIONS } from "@/lib/enums";
 import { toast } from "react-toastify";
 import { useRegisterCandidate } from "@/lib/data/candidates";
+import LoadingButton from "../ui/Loading";
 
 const ApplicationSchema = object({
   firstname: optional(string()),
@@ -48,7 +49,7 @@ export default function ApplicationForm({
   useEffect(() => {
     if (isSuccess && data) {
       localStorage.setItem("pk", data.publicId);
-      toast.success("Data sent to backend. Redirecting...");
+      toast.success("Registered successfully. Redirecting...");
 
       setTimeout(() => {
         setIsSuccess(true);
@@ -209,7 +210,11 @@ export default function ApplicationForm({
           <Link href="/payment" className="text-secondary-hover">
             Already registered
           </Link>
-          <Button type="submit">Submit</Button>
+          {isLoading ? (
+            <LoadingButton />
+          ) : (
+            <Button type="submit">Submit</Button>
+          )}
         </div>
       </form>
     </Form>
