@@ -24,6 +24,8 @@ import { PROVIDER } from "@/lib/enums";
 import Image from "next/image";
 import { useRegisterToWaitlist } from "@/lib/data/candidates";
 import LoadingButton from "../ui/Loading";
+import { ISession, useGetLatestSession } from "@/lib/data/payments";
+import { formatDate } from "@/lib/utils";
 
 const PaymentSchema = object({
   publicId: string({ required_error: "Please provide your public ID" })
@@ -48,21 +50,36 @@ export default function PaymentForm({
 }: {
   setIsSuccess: Dispatch<SetStateAction<boolean>>;
 }) {
-  // const session = {
-  //   _id: "sjkdjs9892893829skdlksa",
-  //   date: "July 2024",
-  // };
-  const session = undefined;
-
+  // Handle provider
   const providers = [
     { image: "/images/momo.png", value: PROVIDER.MOMO },
     { image: "/images/om.png", value: PROVIDER.OM },
   ];
-
-  // Handle provider
   const [provider, setProvider] = useState(providers[0].value);
-
   // End Handle provider
+
+  /**
+   * RECRUITMENT SESSION =======================>
+   */
+  const [recruitmentSession, setRecruitmentSession] = useState<
+    ISession | undefined
+  >(undefined);
+  const { getLatestSession, sSuccess, sData, sLoading, sError } =
+    useGetLatestSession();
+
+  useEffect(() => {
+    if (!recruitmentSession) {
+      getLatestSession();
+    }
+
+    if (!recruitmentSession && sSuccess && sData) {
+      console.log({ session: { ...sData, data: formatDate(sData.date) } });
+      setRecruitmentSession({ ...sData, date: formatDate(sData.date) });
+    }
+  }, [getLatestSession, sData, sError, sSuccess, recruitmentSession]);
+  /**
+   * <======================= RECRUITMENT SESSION
+   */
 
   /**
    * PAYMENT =======================>
@@ -91,6 +108,9 @@ export default function PaymentForm({
       // }, 5000);
     }
   }
+  /**
+   * <======================= PAYMENT
+   */
 
   /**
    * WAITLIST =======================>
@@ -105,7 +125,7 @@ export default function PaymentForm({
 
   useEffect(() => {
     if (wSuccess && wData) {
-      toast.success("Added the waitlist.");
+      toast.success("Added to the waitlist.");
     }
 
     if (wError) {
@@ -117,7 +137,7 @@ export default function PaymentForm({
     }
   }, [wSuccess, wData, wError]);
 
-  // Show waitlist form in case no recruitment session available
+  // Show waitlist form in case no recruitment recruitmentSession available
   const waitlistForm = useForm<WaitlistData>({
     resolver: zodResolver(WaitlistSchema),
   });
@@ -129,10 +149,13 @@ export default function PaymentForm({
     // Send data to backend
     await registerToWaitlist(data);
   }
+  /**
+   * <======================= WAITLIST
+   */
 
   return (
     <Form {...form}>
-      {session && (
+      {recruitmentSession && (
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-3 bg-gray-500/40 px-3 py-5 rounded backdrop-blur-lg w-full max-w-[500px]"
@@ -147,7 +170,7 @@ export default function PaymentForm({
               <span className="text-secondary-hover font-bold">10.000 XAF</span>{" "}
               to participate to the recruitment session of{" "}
               <span className="text-secondary-hover font-bold">
-                {session.date}
+                {recruitmentSession.date as string}
               </span>
             </p>
           </div>
@@ -232,14 +255,14 @@ export default function PaymentForm({
           </div>
         </form>
       )}
-      {!session && (
+      {!recruitmentSession && (
         <form
           onSubmit={handleWaitlistSubmit(onSubmitWaitlist)}
           className="space-y-3 bg-gray-500/40 px-3 py-5 rounded backdrop-blur-lg w-full max-w-[500px]"
         >
           <div>
             <h1 className="text-3xl md:text-4xl">
-              No recruitment session available for the moment.{" "}
+              No recruitment recruitmentSession available for the moment.{" "}
               <span className="text-secondary-hover font-bold">
                 Join the waitlist
               </span>
@@ -247,7 +270,7 @@ export default function PaymentForm({
             </h1>
             <p className="text-white/60">
               Join the waitlist to get notified as soon as there is a new
-              recruitment session available
+              recruitment recruitmentSession available
             </p>
           </div>
           <FormField
