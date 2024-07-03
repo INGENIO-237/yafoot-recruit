@@ -24,7 +24,11 @@ import { PROVIDER } from "@/lib/enums";
 import Image from "next/image";
 import { useRegisterToWaitlist } from "@/lib/data/candidates";
 import LoadingButton from "../ui/Loading";
-import { ISession, useGetLatestSession } from "@/lib/data/payments";
+import {
+  ISession,
+  useGetLatestSession,
+  useInitiatePayment,
+} from "@/lib/data/payments";
 import { formatDate } from "@/lib/utils";
 
 const PaymentSchema = object({
@@ -37,7 +41,7 @@ const PaymentSchema = object({
   }),
 });
 
-type PaymentData = z.infer<typeof PaymentSchema>;
+export type PaymentData = z.infer<typeof PaymentSchema>;
 
 const WaitlistSchema = object({
   publicId: string({ required_error: "Please provide your public ID" }),
@@ -84,13 +88,34 @@ export default function PaymentForm({
   /**
    * PAYMENT =======================>
    */
+  const [reference, setReference] = useState<string | undefined>(undefined);
+  const { initiatePayment, pData, pError, pLoading, pSuccess } =
+    useInitiatePayment();
+
+  useEffect(() => {
+    if (pSuccess && pData) {
+      const { message, paymentRef, authorization_url } = pData;
+
+      setReference(paymentRef);
+      toast.success(message, { autoClose: false });
+    }
+
+    if (pError) {
+      const errors = pError?.response?.data;
+
+      if (errors) {
+        errors.map((err: any) => toast.error(err.message));
+      }
+    }
+  }, [pData, pError, pSuccess]);
+
   const form = useForm<PaymentData>({
     resolver: zodResolver(PaymentSchema),
   });
 
   const { control, handleSubmit } = form;
 
-  function onSubmit(data: PaymentData) {
+  async function onSubmit(data: PaymentData) {
     const errors = [];
 
     if (!isValidPhoneNumber(data.phone)) errors.push("Invalid phone number");
@@ -98,11 +123,10 @@ export default function PaymentForm({
     if (errors.length > 0) {
       errors.forEach((error) => toast.error(error));
     } else {
-      // TODO: Send data to backend
+      // Send data to backend
       const payload = { ...data, provider };
-      console.log({ payload });
 
-      toast.success("Data sent to backend. Redirecting...");
+      await initiatePayment(payload);
       // setTimeout(() => {
       //   setIsSuccess(true);
       // }, 5000);
