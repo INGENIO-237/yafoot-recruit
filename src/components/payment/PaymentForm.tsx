@@ -20,13 +20,14 @@ import { toast } from "react-toastify";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { PROVIDER } from "@/lib/enums";
+import { PAYMENT_STATUS, PROVIDER } from "@/lib/enums";
 import Image from "next/image";
 import { useRegisterToWaitlist } from "@/lib/data/candidates";
 import LoadingButton from "../ui/Loading";
 import {
   ISession,
   useGetLatestSession,
+  useGetPayment,
   useInitiatePayment,
 } from "@/lib/data/payments";
 import { formatDate } from "@/lib/utils";
@@ -77,7 +78,10 @@ export default function PaymentForm({
     }
 
     if (!recruitmentSession && sSuccess && sData) {
-      console.log({ session: { ...sData, data: formatDate(sData.date) } });
+      localStorage.setItem(
+        "session",
+        JSON.stringify({ ...sData, data: formatDate(sData.date) })
+      );
       setRecruitmentSession({ ...sData, date: formatDate(sData.date) });
     }
   }, [getLatestSession, sData, sError, sSuccess, recruitmentSession]);
@@ -89,11 +93,12 @@ export default function PaymentForm({
    * PAYMENT =======================>
    */
   const [reference, setReference] = useState<string | undefined>(undefined);
+  const [isFetchingPaymentStatus, setIsFetchingPaymentStatus] = useState(false);
   const { initiatePayment, pData, pError, pLoading, pSuccess } =
     useInitiatePayment();
 
   useEffect(() => {
-    if (pSuccess && pData) {
+    if (pSuccess && pData && !reference) {
       const { message, paymentRef, authorization_url } = pData;
 
       setReference(paymentRef);
@@ -107,7 +112,57 @@ export default function PaymentForm({
         errors.map((err: any) => toast.error(err.message));
       }
     }
-  }, [pData, pError, pSuccess]);
+  }, [pData, pError, pSuccess, reference]);
+
+  // Constantly check for payment status
+  const { getPayment } = useGetPayment();
+
+  useEffect(() => {
+    if (reference) {
+      let timeout = 1000 * 60 * 10; // 10 minutes
+      const TIME_INTERVAL = 30000; // 30 secondes
+      let exit = false;
+
+      // console.log({ reference });
+      setIsFetchingPaymentStatus(true);
+      const interval = setInterval(async (): Promise<void> => {
+        timeout -= TIME_INTERVAL;
+        // console.log("Verifying payment status...");
+
+        try {
+          const { status } = await getPayment(reference as string);
+          if (
+            Object.values(PAYMENT_STATUS).includes(status as PAYMENT_STATUS) &&
+            status != PAYMENT_STATUS.INITIALIZED
+          ) {
+            exit = true;
+            setIsFetchingPaymentStatus(false);
+          }
+
+          // Payment succeeded, behave accordingly
+          if (status == PAYMENT_STATUS.SUCCEEDED) {
+            localStorage.setItem("reference", reference);
+            toast.success("Payment completed successfully.");
+            setTimeout(() => setIsSuccess(true), 1500);
+          }
+
+          if (exit && status != PAYMENT_STATUS.SUCCEEDED)
+            toast.error("Payment failed");
+
+          if (timeout < 1 || exit) {
+            setIsFetchingPaymentStatus(false);
+            clearInterval(interval);
+          }
+        } catch (error) {
+          setIsFetchingPaymentStatus(false);
+          console.log(error);
+          toast.error(
+            "Failed checking payment status. Contact the support and report the issue please."
+          );
+        }
+      }, TIME_INTERVAL);
+    }
+  }, [getPayment, reference, setIsSuccess]);
 
   const form = useForm<PaymentData>({
     resolver: zodResolver(PaymentSchema),
@@ -124,12 +179,13 @@ export default function PaymentForm({
       errors.forEach((error) => toast.error(error));
     } else {
       // Send data to backend
-      const payload = { ...data, provider };
+      const payload = {
+        ...data,
+        provider,
+        session: recruitmentSession?._id.toString() as string,
+      };
 
       await initiatePayment(payload);
-      // setTimeout(() => {
-      //   setIsSuccess(true);
-      // }, 5000);
     }
   }
   /**
@@ -275,7 +331,11 @@ export default function PaymentForm({
             <Link href="/apply" className="text-secondary-hover">
               Not registered yet
             </Link>
-            <Button type="submit">Pay</Button>
+            {pLoading || isFetchingPaymentStatus ? (
+              <LoadingButton />
+            ) : (
+              <Button type="submit">Pay</Button>
+            )}
           </div>
         </form>
       )}

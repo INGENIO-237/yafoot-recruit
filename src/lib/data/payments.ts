@@ -31,9 +31,12 @@ export function useGetLatestSession() {
 }
 
 export function useInitiatePayment() {
-  async function payApplicationFees(
-    data: PaymentData & { provider: PROVIDER }
-  ) {
+  async function payApplicationFees(data: {
+    provider: PROVIDER;
+    session: string;
+    publicId: string;
+    phone: string;
+  }) {
     return server
       .post("/payments", data)
       .then(
@@ -66,13 +69,34 @@ export function useInitiatePayment() {
     },
     any,
     {
+      provider: PROVIDER;
+      session: string;
       publicId: string;
       phone: string;
-    } & {
-      provider: PROVIDER;
     },
     unknown
   >({ mutationFn: payApplicationFees });
 
   return { initiatePayment, pData, pSuccess, pError, pLoading };
+}
+
+export function useGetPayment() {
+  async function fetchPayment(reference: string) {
+    return server
+      .get("/payments/" + reference)
+      .then((response: AxiosResponse<{ status: string }>) => response.data)
+      .catch((error) => {
+        throw error;
+      });
+  }
+
+  const {
+    mutateAsync: getPayment,
+    isPending: psLoading,
+    isSuccess: psSuccess,
+  } = useMutation<{ status: string }, any, string, unknown>({
+    mutationFn: fetchPayment,
+  });
+
+  return { getPayment, psLoading, psSuccess };
 }

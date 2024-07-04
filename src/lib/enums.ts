@@ -152,3 +152,9 @@ export enum PROVIDER {
   OM = "OM",
   MOMO = "MOMO",
 }
+
+export enum PAYMENT_STATUS {
+  INITIALIZED = "INITIALIZED",
+  SUCCEEDED = "SUCCEEDED",
+  FAILED = "FAILED",
+}
