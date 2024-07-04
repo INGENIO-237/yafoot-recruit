@@ -13,7 +13,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Cities from "./Cities";
 import Positions from "./Positions";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
@@ -21,6 +21,8 @@ import "react-phone-number-input/style.css";
 import Link from "next/link";
 import { CITIES, POSITIONS } from "@/lib/enums";
 import { toast } from "react-toastify";
+import { useRegisterCandidate } from "@/lib/data/candidates";
+import LoadingButton from "../ui/Loading";
 
 const ApplicationSchema = object({
   firstname: optional(string()),
@@ -31,7 +33,7 @@ const ApplicationSchema = object({
   }),
 });
 
-type ApplicationData = z.infer<typeof ApplicationSchema>;
+export type ApplicationData = z.infer<typeof ApplicationSchema>;
 
 export default function ApplicationForm({
   setIsSuccess,
@@ -41,16 +43,45 @@ export default function ApplicationForm({
   const [city, setCity] = useState("");
   const [position, setPosition] = useState("");
 
+  const { registerCandidate, isLoading, isSuccess, data, error } =
+    useRegisterCandidate();
+
+  useEffect(() => {
+    if (isSuccess && data) {
+      localStorage.setItem("pk", data.publicId);
+      toast.success("Registered successfully. Redirecting...");
+
+      setTimeout(() => {
+        setIsSuccess(true);
+      }, 5000);
+    }
+
+    if (error) {
+      const errors = error?.response?.data;
+
+      if (errors) {
+        errors.map((err: any) => toast.error(err.message as string));
+      } else {
+        toast.error("Something went wrong. Please retry.");
+      }
+    }
+  }, [isSuccess, data, error, setIsSuccess]);
+
   const form = useForm<ApplicationData>({
     resolver: zodResolver(ApplicationSchema),
   });
 
   const { control, handleSubmit } = form;
 
-  function onSubmit(data: ApplicationData) {
+  async function onSubmit(data: ApplicationData) {
     (data as ApplicationData & { city: string; position: string }).city = city;
     (data as ApplicationData & { city: string; position: string }).position =
       position;
+
+    const finalData = { ...data } as ApplicationData & {
+      city: string;
+      position: string;
+    };
 
     const errors = [];
 
@@ -74,12 +105,8 @@ export default function ApplicationForm({
     if (errors.length > 0) {
       errors.forEach((error) => toast.error(error));
     } else {
-      // TODO: Send data to backend
-      toast.success("Data sent to backend. Redirecting...");
-
-      setTimeout(() => {
-        setIsSuccess(true);
-      }, 3000);
+      // Send data to backend
+      await registerCandidate(finalData);
     }
   }
 
@@ -183,7 +210,11 @@ export default function ApplicationForm({
           <Link href="/payment" className="text-secondary-hover">
             Already registered
           </Link>
-          <Button type="submit">Submit</Button>
+          {isLoading ? (
+            <LoadingButton />
+          ) : (
+            <Button type="submit">Submit</Button>
+          )}
         </div>
       </form>
     </Form>

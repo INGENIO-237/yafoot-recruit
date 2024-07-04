@@ -10,10 +10,10 @@ export default function RegisterSuccess() {
         </h1>
         <p className="text-white/60 mt-3">
           Your public ID is:{" "}
-          <span className="text-secondary-hover font-bold">YA-078</span>
+          <span className="text-secondary-hover font-bold">{localStorage.getItem("pk") || "YA-XXXX"}</span>
         </p>
         <p className="text-white/60">
-          You will need it pay your participation fees. Also, it will be used to
+          You will need it to pay your participation fees. Also, it will be used to
           uniquely identify you during the tests day.
         </p>
 
