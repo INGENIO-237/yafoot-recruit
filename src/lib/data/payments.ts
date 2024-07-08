@@ -25,7 +25,7 @@ export function useGetLatestSession() {
     isSuccess: sSuccess,
     isPending: sLoading,
     error: sError,
-  } = useMutation<ISession, any, any, unknown>({
+  } = useMutation<ISession, any, any | undefined, unknown>({
     mutationFn: fetchLatestSession,
   });
 
