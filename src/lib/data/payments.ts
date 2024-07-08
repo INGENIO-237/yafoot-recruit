@@ -25,7 +25,9 @@ export function useGetLatestSession() {
     isSuccess: sSuccess,
     isPending: sLoading,
     error: sError,
-  } = useMutation<ISession, any>({ mutationFn: fetchLatestSession });
+  } = useMutation<ISession, any, any, unknown>({
+    mutationFn: fetchLatestSession,
+  });
 
   return { getLatestSession, sData, sSuccess, sLoading, sError };
 }
@@ -84,7 +86,7 @@ export function useGetPayment() {
   async function fetchPayment(reference: string) {
     return server
       .get("/payments/" + reference)
-      .then((response: AxiosResponse<{ status: string }>) => response.data)
+      .then((response: AxiosResponse<{ status: string, card: string }>) => response.data)
       .catch((error) => {
         throw error;
       });
@@ -94,9 +96,10 @@ export function useGetPayment() {
     mutateAsync: getPayment,
     isPending: psLoading,
     isSuccess: psSuccess,
-  } = useMutation<{ status: string }, any, string, unknown>({
+    data: payment,
+  } = useMutation<{ status: string, card:string }, any, string, unknown>({
     mutationFn: fetchPayment,
   });
 
-  return { getPayment, psLoading, psSuccess };
+  return { getPayment, psLoading, psSuccess, payment };
 }

@@ -80,7 +80,7 @@ export default function PaymentForm({
     if (!recruitmentSession && sSuccess && sData) {
       localStorage.setItem(
         "session",
-        JSON.stringify({ ...sData, data: formatDate(sData.date) })
+        JSON.stringify({ ...sData, date: formatDate(sData.date) })
       );
       setRecruitmentSession({ ...sData, date: formatDate(sData.date) });
     }
@@ -123,11 +123,9 @@ export default function PaymentForm({
       const TIME_INTERVAL = 30000; // 30 secondes
       let exit = false;
 
-      // console.log({ reference });
       setIsFetchingPaymentStatus(true);
       const interval = setInterval(async (): Promise<void> => {
         timeout -= TIME_INTERVAL;
-        // console.log("Verifying payment status...");
 
         try {
           const { status } = await getPayment(reference as string);
@@ -285,7 +283,7 @@ export default function PaymentForm({
                     value={provider.value}
                     id={provider.value}
                     className="text-white border-white"
-                    onClick={(e) => {
+                    onClick={(e: any) => {
                       setProvider(e.target.value as PROVIDER);
                     }}
                   />
