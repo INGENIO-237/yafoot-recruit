@@ -51,6 +51,7 @@ export default function RootLayout({
           href="/images/favicon-yafoot.png"
           type="image/x-icon"
         />
+        <base href="/" />
       </head>
       <body className={dmSans.className}>
         <QueryClientProvider client={queryClient}>
