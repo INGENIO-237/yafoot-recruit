@@ -28,8 +28,10 @@ export default function Home() {
             <div className="space-y-5 text-center md:text-left font-medium">
               <h1 className="text-3xl leading-[1] md:text-4xl lg:text-5xl">
                 Become the{" "}
-                <span className="text-secondary-hover font-bold">next icon</span> of
-                Cameroonian football
+                <span className="text-secondary-hover font-bold">
+                  next icon
+                </span>{" "}
+                of Cameroonian football
               </h1>
               <p className="text-white/60">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -124,7 +126,8 @@ export default function Home() {
                         key={index}
                         className="text-xl flex items-center gap-3"
                       >
-                        <PiSealCheckFill className="text-secondary-hover" /> {step}
+                        <PiSealCheckFill className="text-secondary-hover" />{" "}
+                        {step}
                       </p>
                     );
                   })}
