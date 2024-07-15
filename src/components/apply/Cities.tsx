@@ -46,18 +46,18 @@ export default function Cities({
         >
           {value
             ? cities.find((city) => city.value === value)?.label
-            : "Select city..."}
+            : "Sélectionnez une ville..."}
           {/* <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0 -left-[30px]">
         <Command className="md:w-[400px] ">
           <CommandInput
-            placeholder="Search city..."
+            placeholder="Rechercher une ville..."
             className="h-9 w-[500px]"
           />
           <CommandList>
-            <CommandEmpty>No city found.</CommandEmpty>
+            <CommandEmpty>Aucune ville trouvée.</CommandEmpty>
             <CommandGroup>
               {cities.map((city) => (
                 <CommandItem

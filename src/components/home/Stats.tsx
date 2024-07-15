@@ -8,16 +8,19 @@ export default function Stats() {
   const now = new Date();
   const year = now.getFullYear();
   const stats = [
-    { text: "Years of Existence", num: Number(year) - 1996 },
-    { text: "Played Matches", num: 300 },
-    { text: "Trophies", num: 10 },
+    { text: "Années d'existence", num: Number(year) - 1996 },
+    { text: "Matchs joués", num: 300 },
+    { text: "Trophées", num: 10 },
   ];
 
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
   return (
-    <div ref={ref} className="w-full h-[150px] bg-secondary-hover my-5 flex items-center">
+    <div
+      ref={ref}
+      className="w-full h-[150px] bg-secondary-hover my-5 flex items-center"
+    >
       {isInView && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -27,11 +30,17 @@ export default function Stats() {
           {stats.map((stat, index) => {
             return (
               <div key={index} className="text-primary">
-                <CountUp
-                  end={stat.num}
-                  duration={3}
-                  className="text-4xl font-bold"
-                />
+                {index == 1 ? (
+                  <span className="text-4xl font-bold">
+                    <CountUp end={stat.num} duration={3} />+
+                  </span>
+                ) : (
+                  <CountUp
+                    end={stat.num}
+                    duration={3}
+                    className="text-4xl font-bold"
+                  />
+                )}
                 <p className="font-medium">{stat.text}</p>
               </div>
             );

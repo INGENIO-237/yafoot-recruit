@@ -46,7 +46,7 @@ export default function Positions({
         >
           {value
             ? positions.find((position) => position.value === value)?.label
-            : "Select position..."}
+            : "Sélectionnez un poste..."}
           {/* <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" /> */}
         </Button>
       </PopoverTrigger>
@@ -57,7 +57,7 @@ export default function Positions({
             className="h-9 w-[500px]"
           />
           <CommandList>
-            <CommandEmpty>No position found.</CommandEmpty>
+            <CommandEmpty>Aucun poste trouvé.</CommandEmpty>
             <CommandGroup>
               {positions.map((position) => (
                 <CommandItem
