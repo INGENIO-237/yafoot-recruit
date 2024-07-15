@@ -26,9 +26,9 @@ import LoadingButton from "../ui/Loading";
 
 const ApplicationSchema = object({
   firstname: optional(string()),
-  lastname: string({ required_error: "Last name is required" }),
+  lastname: string({ required_error: "Le nom est obligatoire" }),
   phone: string({
-    required_error: "Phone number is required",
+    required_error: "Le numéro de téléphone est requis",
     invalid_type_error: "Invalid phone number",
   }),
 });
@@ -49,7 +49,7 @@ export default function ApplicationForm({
   useEffect(() => {
     if (isSuccess && data) {
       localStorage.setItem("pk", data.publicId);
-      toast.success("Registered successfully. Redirecting...");
+      toast.success("Enregistré avec succès. Redirection...");
 
       setTimeout(() => {
         setIsSuccess(true);
@@ -62,7 +62,7 @@ export default function ApplicationForm({
       if (errors) {
         errors.map((err: any) => toast.error(err.message as string));
       } else {
-        toast.error("Something went wrong. Please retry.");
+        toast.error("Quelque chose s'est mal passé. Veuillez réessayer.");
       }
     }
   }, [isSuccess, data, error, setIsSuccess]);
@@ -91,16 +91,16 @@ export default function ApplicationForm({
           .city as CITIES
       )
     )
-      errors.push("Invalid city");
+      errors.push("Ville invalide");
     if (
       !Object.values(POSITIONS).includes(
         (data as ApplicationData & { city: string; position: string })
           .position as POSITIONS
       )
     )
-      errors.push("Invalid field position");
+      errors.push("Poste invalide");
 
-    if (!isValidPhoneNumber(data.phone)) errors.push("Invalid phone number");
+    if (!isValidPhoneNumber(data.phone)) errors.push("Numéro de téléphone invalide");
 
     if (errors.length > 0) {
       errors.forEach((error) => toast.error(error));
@@ -118,9 +118,9 @@ export default function ApplicationForm({
       >
         <div>
           <h1 className="text-3xl md:text-4xl">
-            Time to{" "}
+            Il est temps de{" "}
             <span className="text-secondary-hover font-bold">
-              chase your dream
+              poursuivre ton rêve
             </span>
           </h1>
           <p className="text-white/60">
@@ -133,12 +133,10 @@ export default function ApplicationForm({
             name="firstname"
             render={({ field }) => (
               <FormItem className="md:w-[45%]">
-                <FormLabel className="font-medium capitalize">
-                  First name
-                </FormLabel>
+                <FormLabel className="font-medium capitalize">Prénom</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="First name"
+                    placeholder="Prénom"
                     className="text-black"
                     {...field}
                   />
@@ -154,11 +152,11 @@ export default function ApplicationForm({
             render={({ field }) => (
               <FormItem className="md:w-[45%]">
                 <FormLabel className="font-medium capitalize">
-                  Last name
+                  Nom
                 </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Last name"
+                    placeholder="Nom"
                     className="text-black"
                     {...field}
                   />
@@ -170,13 +168,13 @@ export default function ApplicationForm({
           />
         </div>
         <FormItem className="flex flex-col">
-          <FormLabel className="font-medium capitalize">City</FormLabel>
+          <FormLabel className="font-medium capitalize">Ville</FormLabel>
           <FormControl>
             <Cities value={city} setCity={setCity} />
           </FormControl>
         </FormItem>
         <FormItem className="flex flex-col">
-          <FormLabel className="font-medium capitalize">Position</FormLabel>
+          <FormLabel className="font-medium capitalize">Poste</FormLabel>
           <FormControl>
             <Positions value={position} setPosition={setPosition} />
           </FormControl>
@@ -186,12 +184,12 @@ export default function ApplicationForm({
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="font-medium capitalize">
-                Phone Number
+              <FormLabel className="font-medium">
+              Numéro de téléphone
               </FormLabel>
               <FormControl>
                 <PhoneInput
-                  placeholder="Enter phone number"
+                  placeholder="Entrez votre numéro de téléphone"
                   {...field}
                   // className="px-3 py-2 text-black w-full"
                   numberInputProps={{
@@ -208,12 +206,12 @@ export default function ApplicationForm({
         />
         <div className="flex justify-between items-center">
           <Link href="/payment" className="text-secondary-hover">
-            Already registered
+          Déjà enregistré
           </Link>
           {isLoading ? (
             <LoadingButton />
           ) : (
-            <Button type="submit">Submit</Button>
+            <Button type="submit">Soumettre</Button>
           )}
         </div>
       </form>

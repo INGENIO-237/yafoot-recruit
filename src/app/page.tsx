@@ -13,10 +13,10 @@ export default function Home() {
   const joinRef = useRef(null);
   const joinIsInView = useInView(joinRef, { once: true });
   const steps = [
-    "Fill in the form",
-    "Pay your participation fees",
-    "Get called to pass the tests",
-    "Perform well and get selected",
+    "Remplissez le formulaire",
+    "Payez vos frais de participation",
+    "Soyez appelé pour passer les tests",
+    "Soyez performant et soyez sélectionné",
   ];
 
   return (
@@ -27,11 +27,11 @@ export default function Home() {
           <div className="order-2 md:order-1 max-w-[500px] mt-10 md:mt-0">
             <div className="space-y-5 text-center md:text-left font-medium">
               <h1 className="text-3xl leading-[1] md:text-4xl lg:text-5xl">
-                Become the{" "}
+                Devenez la{" "}
                 <span className="text-secondary-hover font-bold">
-                  next icon
+                  prochaine icône
                 </span>{" "}
-                of Cameroonian football
+                du football Camerounais
               </h1>
               <p className="text-white/60">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -42,7 +42,7 @@ export default function Home() {
             <div className="mt-10 flex justify-center items-center md:justify-start">
               <Link href="/apply">
                 <Button className="flex gap-3">
-                  <span>Join us</span>
+                  <span>Rejoignez-nous</span>
                   <motion.div
                     initial={{ translateX: "30%" }}
                     animate={{
@@ -117,7 +117,7 @@ export default function Home() {
             <div className="md:flex md:items-center">
               <div className="text-left">
                 <h1 className="text-3xl mt-5 md:mt-0 font-medium">
-                  The whole process
+                  L&rsquo;ensemble du processus
                 </h1>
                 <div className="space-y-5 mt-8">
                   {steps.map((step, index) => {

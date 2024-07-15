@@ -22,7 +22,7 @@ export default function Footer() {
             <PiMapPinSimpleArea /> <span>https://yafoot-fc.com</span>
           </Link> */}
           <Link href="#" className="flex items-center gap-3">
-            <PiMapPinSimpleArea /> <span>Yaounde, Cameroon</span>
+            <PiMapPinSimpleArea /> <span>Yaoundé, Cameroun</span>
           </Link>
           <Link href="tel: +237 656 144 663" className="flex items-center gap-3">
             <PiPhone /> <span>+237 656 144 663</span>

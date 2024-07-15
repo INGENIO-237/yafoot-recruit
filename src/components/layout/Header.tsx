@@ -15,7 +15,7 @@ export default function Header() {
         />
       </Link>
       <Link href="/apply">
-        <Button>Register</Button>
+        <Button>S&rsquo;inscrire</Button>
       </Link>
     </nav>
   );
