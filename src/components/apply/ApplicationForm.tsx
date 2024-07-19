@@ -192,6 +192,7 @@ export default function ApplicationForm({
       city: string;
       position: string;
       strongFoot: string;
+      clubs?: { start: number; end: number; name: string }[];
     };
 
     const errors = [];
