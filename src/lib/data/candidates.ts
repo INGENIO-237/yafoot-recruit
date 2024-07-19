@@ -7,7 +7,7 @@ import { WaitlistData } from "@/components/payment/PaymentForm";
 type RegisterCandidateData = ApplicationData & {
   city: string;
   position: string;
-  clubs: { start: number; end: number; name: string }[];
+  clubs?: { start: number; end: number; name: string }[];
 };
 
 export type ICandidate = {
