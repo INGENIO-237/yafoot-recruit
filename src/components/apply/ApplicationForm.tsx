@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { nativeEnum, number, object, optional, string, z } from "zod";
+import { object, optional, string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -13,7 +13,15 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  LegacyRef,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Cities from "./Cities";
 import Positions from "./Positions";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
@@ -24,8 +32,10 @@ import { toast } from "react-toastify";
 import { useRegisterCandidate } from "@/lib/data/candidates";
 import LoadingButton from "../ui/Loading";
 import StrongFoot from "./StrongFoot";
+import Image from "next/image";
 
 const ApplicationSchema = object({
+  image: z.instanceof(File, { message: "La photo est obligatoire" }),
   firstname: optional(string()),
   lastname: string({ required_error: "Le nom est obligatoire" }),
   phone: string({
@@ -65,6 +75,9 @@ export default function ApplicationForm({
   const [city, setCity] = useState("");
   const [strongFoot, setStrongFoot] = useState("");
   const [position, setPosition] = useState("");
+  const hiddenImageRef = useRef<HTMLInputElement | null>(null);
+  const imageRef = useRef<HTMLImageElement>();
+  const [picture, setPicture] = useState("");
 
   const [club1, setClub1] = useState({
     start: "",
@@ -110,7 +123,7 @@ export default function ApplicationForm({
     resolver: zodResolver(ApplicationSchema),
   });
 
-  const { control, handleSubmit } = form;
+  const { control, handleSubmit, setValue } = form;
 
   const now = new Date();
   const year = now.getFullYear();
@@ -139,7 +152,7 @@ export default function ApplicationForm({
       });
     }
 
-    if(clubs.length > 0){
+    if (clubs.length > 0) {
       (
         data as ApplicationData & {
           city: string;
@@ -233,6 +246,17 @@ export default function ApplicationForm({
     }
   }
 
+  function handleImagePicker() {
+    // (e as MouseEvent).stopPropagation();
+    // if (hiddenImageRef.current) hiddenImageRef.current.value = "";
+    hiddenImageRef.current?.click();
+  }
+
+  function handleImageSelect(e: ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files as FileList;
+    setPicture(URL.createObjectURL(files[0]));
+  }
+
   return (
     <Form {...form}>
       <form
@@ -254,6 +278,69 @@ export default function ApplicationForm({
         {/* First part */}
         {!next && (
           <>
+            {/* Picture */}
+            <div className="flex items-center justify-center space-y-3 md:space-y-0">
+              {!picture && (
+                <>
+                  <div hidden>
+                    <FormField
+                      control={control}
+                      name="image"
+                      render={({ field }) => {
+                        const { ref: imageRegisterRef, ...rest } = field;
+                        return (
+                          <FormItem className="md:w-[45%]">
+                            <FormControl>
+                              <Input
+                                className="text-black"
+                                type="file"
+                                accept="image/jpg, image/jpeg, image/png"
+                                // {...rest}
+                                onChange={(e) => {
+                                  handleImageSelect(e); //In order to display the image on the screen
+                                  const files = e.target.files;
+                                  if (files && files.length > 0) {
+                                    setValue("image", files[0]);
+                                    hiddenImageRef.current = null;
+                                  }
+                                }}
+                                ref={(e) => {
+                                  hiddenImageRef.current =
+                                    e as HTMLInputElement;
+                                  imageRegisterRef(e);
+                                }}
+                              />
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    className="w-[120px] h-[120px] b-white bg-gray-500 flex justify-center items-center rounded-full hover:cursor-pointer"
+                    onClick={handleImagePicker}
+                  >
+                    Photo
+                  </div>
+                </>
+              )}
+
+              {picture && (
+                <Image
+                  src={picture}
+                  width={120}
+                  height={120}
+                  alt="Photo"
+                  className="w-[120px] h-[120px] rounded-full hover:cursor-pointer"
+                  ref={imageRef as LegacyRef<HTMLImageElement | null>}
+                  onClick={handleImagePicker}
+                />
+              )}
+            </div>
+
             <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
               <FormField
                 control={control}
@@ -554,7 +641,7 @@ export default function ApplicationForm({
                 <FormItem className="md:w-[25%]">
                   <FormControl>
                     <Input
-                    type="number"
+                      type="number"
                       placeholder="Fin"
                       className="text-black"
                       value={club1.end}
@@ -608,7 +695,7 @@ export default function ApplicationForm({
                 <FormItem className="md:w-[25%]">
                   <FormControl>
                     <Input
-                    type="number"
+                      type="number"
                       placeholder="Fin"
                       className="text-black"
                       value={club2.end}
@@ -662,7 +749,7 @@ export default function ApplicationForm({
                 <FormItem className="md:w-[25%]">
                   <FormControl>
                     <Input
-                    type="number"
+                      type="number"
                       placeholder="Fin"
                       className="text-black"
                       value={club3.end}

@@ -7,6 +7,7 @@ import { WaitlistData } from "@/components/payment/PaymentForm";
 type RegisterCandidateData = ApplicationData & {
   city: string;
   position: string;
+  clubs: { start: number; end: number; name: string }[];
 };
 
 export type ICandidate = {
@@ -20,8 +21,21 @@ export type ICandidate = {
 
 export function useRegisterCandidate() {
   async function createCandidate(data: RegisterCandidateData) {
+    const formData = new FormData();
+
+    for (let [key, value] of Object.entries(data)) {
+      if (key == "clubs") {
+        formData.append(key, JSON.stringify(value));
+      } else {
+        formData.append(key, value);
+      }
+    }
     return server
-      .post("/candidates", data)
+      .post("/candidates", formData, {
+        headers: {
+          "Content-Type": "multipart/formdata",
+        },
+      })
       .then((response) => response.data)
       .catch((error) => {
         throw error;
